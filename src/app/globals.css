@@ -24,6 +24,17 @@
   --color-done-bg: #e0e7ff;
   --color-done-fg: #3730a3;
 
+  /* Sign-in pages: a white canvas with royal-blue accents. */
+  --color-royal: #2457c5;
+  --color-royal-hover: #1e4aae;
+  --color-royal-active: #193e92;
+  --color-sky: #63a5f2;
+  --color-ice: #eff6ff;
+  --color-cyan-soft: #bdebfa;
+  --color-navy: #142b4d;
+  --color-slate-blue: #58708f;
+  --color-line: #d5e5f7;
+
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -72,10 +83,16 @@ body {
 }
 
 /* Clearly visible keyboard focus everywhere. */
-:focus-visible {
-  outline: 3px solid var(--color-brand-500);
-  outline-offset: 2px;
-  border-radius: 6px;
+/* In the base layer so a component's own focus style (a utility) can replace it. */
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .auth-scope :focus-visible {
+    outline-color: var(--color-royal);
+  }
 }
 
 /* Reusable component styles (Tailwind v4 utilities so they work with variants and @apply). */
@@ -153,6 +170,31 @@ body {
     transform: none;
   }
 }
+@keyframes scan {
+  0%,
+  100% {
+    top: 1.5rem;
+  }
+  50% {
+    top: calc(100% - 1.5rem);
+  }
+}
+@keyframes sweep {
+  0%,
+  100% {
+    top: 8%;
+  }
+  50% {
+    top: 92%;
+  }
+}
+@utility animate-sweep {
+  animation: sweep 2.4s ease-in-out infinite;
+}
+@utility animate-scan {
+  animation: scan 2s ease-in-out infinite;
+}
+
 /* Entrance animation; set --i on children for a short stagger. */
 @utility animate-in {
   animation: fade-up 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -179,4 +221,18 @@ body {
 /* Leave room for the iPhone home indicator under the bottom navigation. */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Sign-in pages */
+@utility auth-input {
+  @apply block h-12 w-full rounded-lg border border-line bg-white pl-11 pr-3 text-[15px] text-navy placeholder:text-slate-blue/70 transition-[border-color,box-shadow] duration-150 hover:border-sky focus:border-royal focus:outline-none focus:ring-[3px] focus:ring-royal/15 aria-[invalid=true]:border-red-500 aria-[invalid=true]:focus:ring-red-500/15;
+}
+@utility auth-label {
+  @apply mb-1.5 block text-sm font-medium text-navy;
+}
+@utility auth-primary {
+  @apply inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-royal px-4 text-[15px] font-semibold text-white transition-[background-color,box-shadow,transform] duration-150 hover:bg-royal-hover hover:shadow-[0_6px_16px_-8px_rgba(36,87,197,0.6)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-royal/30 active:translate-y-px active:bg-royal-active disabled:cursor-not-allowed disabled:bg-royal/50 disabled:shadow-none;
+}
+@utility auth-secondary {
+  @apply inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-lg border border-line bg-white px-4 text-[15px] font-medium text-navy transition-colors duration-150 hover:border-sky hover:bg-ice focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-royal/20 active:bg-ice disabled:cursor-not-allowed disabled:opacity-60;
 }

@@ -10,9 +10,10 @@ export function BottomNavigation({ unread }: { unread: number }) {
   return (
     <nav
       aria-label="Main"
-      className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-md lg:hidden"
+      style={{ bottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
+      className="fixed inset-x-3 z-40 mx-auto max-w-lg rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 shadow-[0_10px_30px_-12px_rgba(16,24,40,0.35)] backdrop-blur-md lg:hidden"
     >
-      <ul className="mx-auto grid max-w-lg grid-cols-5">
+      <ul className="grid grid-cols-5">
         {NAV_ITEMS.filter((i) => i.mobile).map(({ href, label, Icon }) => {
           const active = isActive(pathname, href);
           const isScan = href === "/scan";
@@ -21,7 +22,7 @@ export function BottomNavigation({ unread }: { unread: number }) {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex min-h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-medium ${
+                className={`relative flex min-h-[3.75rem] flex-col items-center justify-center gap-0.5 text-[11px] font-medium ${
                   active ? "text-brand-700 font-semibold dark:text-brand-200" : "muted"
                 }`}
               >

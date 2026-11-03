@@ -216,7 +216,7 @@ export function ScanCamera({
     <div className="space-y-4">
       <div
         ref={containerRef}
-        className="relative mx-auto h-[min(52dvh,30rem)] w-full max-w-md overflow-hidden rounded-2xl bg-stone-900"
+        className="relative mx-auto h-[min(52dvh,30rem)] w-full max-w-md overflow-hidden rounded-2xl bg-stone-900 shadow-[0_20px_40px_-20px_rgba(16,24,40,0.5)]"
       >
         <video
           ref={videoRef}
@@ -230,11 +230,15 @@ export function ScanCamera({
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
             <div
               ref={frameRef}
-              className="relative h-[40%] w-[86%] rounded-xl border-[3px] border-white/90 shadow-[0_0_0_9999px_rgba(0,0,0,0.45)]"
+              className="relative h-[40%] w-[86%] rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]"
             >
-              <span className="absolute -top-px left-1/2 h-0.5 w-2/3 -translate-x-1/2 animate-pulse bg-brand-200" />
+              {/* Corner brackets and a sweeping line show where to aim. */}
+              {["left-0 top-0 border-l-[3px] border-t-[3px] rounded-tl-xl", "right-0 top-0 border-r-[3px] border-t-[3px] rounded-tr-xl", "bottom-0 left-0 border-b-[3px] border-l-[3px] rounded-bl-xl", "bottom-0 right-0 border-b-[3px] border-r-[3px] rounded-br-xl"].map((c) => (
+                <span key={c} className={`absolute size-7 border-white ${c}`} />
+              ))}
+              <span className="animate-sweep absolute inset-x-3 h-0.5 rounded bg-brand-200 shadow-[0_0_14px_2px_rgba(166,244,197,0.85)]" />
             </div>
-            <p className="mt-4 rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white">
+            <p className="mt-4 rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
               Place the expiry date inside the frame.
             </p>
             {barcodeReady && (

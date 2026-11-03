@@ -10,6 +10,7 @@ import { LogoMark } from "./Logo";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { ReminderRunner } from "./ReminderRunner";
+import { Avatar } from "./Avatar";
 
 /** Layout for signed-in pages: sidebar on desktop, bottom navigation on mobile. */
 export function AppShell({ children }: { children: ReactNode }) {
@@ -25,7 +26,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             <LogoMark className="size-7 shrink-0" />
             <span className="whitespace-nowrap">Food Expiry Reminder</span>
           </Link>
-          {user?.isDemo && <DemoPill />}
+          <span className="flex items-center gap-2">
+            {user?.isDemo && <DemoPill />}
+            <Link href="/settings" aria-label="Profile and settings" className="press">
+              <Avatar name={user?.name || user?.email || "?"} />
+            </Link>
+          </span>
         </header>
         {user?.isDemo && (
           <div className="hidden justify-end px-8 pt-4 lg:flex">

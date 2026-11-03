@@ -6,6 +6,7 @@ import { LogOut } from "lucide-react";
 import { Logo } from "./Logo";
 import { NAV_ITEMS, isActive } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
+import { Avatar } from "./Avatar";
 
 /** Desktop sidebar navigation. */
 export function Sidebar({ unread }: { unread: number }) {
@@ -46,8 +47,13 @@ export function Sidebar({ unread }: { unread: number }) {
         </ul>
       </nav>
       <div className="border-t border-[var(--border)] pt-4">
-        <p className="truncate px-3 text-sm font-medium">{user?.name || "Signed in"}</p>
-        <p className="truncate px-3 text-xs muted">{user?.isDemo ? "Demo mode (local data)" : user?.email}</p>
+        <Link href="/settings" className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-[var(--surface-2)]">
+          <Avatar name={user?.name || user?.email || "?"} className="size-9 text-sm" />
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-medium">{user?.name || "Signed in"}</span>
+            <span className="block truncate text-xs muted">{user?.isDemo ? "Demo mode (local data)" : user?.email}</span>
+          </span>
+        </Link>
         <button type="button" onClick={() => void logout()} className="btn-ghost mt-2 w-full justify-start">
           <LogOut aria-hidden className="size-4" />
           {user?.isDemo ? "Exit demo" : "Log out"}

@@ -1,6 +1,9 @@
 /** Firebase Authentication helpers (email/password and Google). */
 import {
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
+  setPersistence,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -20,7 +23,13 @@ export async function registerWithEmail(name: string, email: string, password: s
   return cred.user;
 }
 
-export async function loginWithEmail(email: string, password: string) {
+/** "Remember me": stay signed in after the browser closes, or only for this browser session. */
+async function applyRemember(remember: boolean) {
+  await setPersistence(getFirebaseAuth(), remember ? browserLocalPersistence : browserSessionPersistence);
+}
+
+export async function loginWithEmail(email: string, password: string, remember = true) {
+  await applyRemember(remember);
   const cred = await signInWithEmailAndPassword(getFirebaseAuth(), email.trim(), password);
   return cred.user;
 }

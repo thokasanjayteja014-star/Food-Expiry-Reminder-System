@@ -9,7 +9,7 @@ export function AuthSwitchLink({ href, children }: { href: "/login" | "/register
   const next = useSearchParams().get("next");
   const target = next && next.startsWith("/") && !next.startsWith("//") ? `${href}?next=${encodeURIComponent(next)}` : href;
   return (
-    <Link href={target} className="font-semibold text-brand-700 hover:underline dark:text-brand-200">
+    <Link href={target} className="font-semibold text-royal hover:underline">
       {children}
     </Link>
   );

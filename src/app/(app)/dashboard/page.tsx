@@ -35,8 +35,10 @@ export default function DashboardPage() {
     const active = queryInventory(products, { status: "ALL", sort: "expiry-asc" }, today);
     const expiringSoon = active.filter((i) => isExpiringSoon(i.status));
     const expired = active.filter((i) => i.status === "EXPIRED").reverse();
+    // Items already listed under "Use these first" are not shown twice.
+    const shown = new Set([...expired, ...expiringSoon].slice(0, 6).map((i) => i.product.id));
     const recent = decorate(products, today)
-      .filter((i) => i.product.status === "ACTIVE")
+      .filter((i) => i.product.status === "ACTIVE" && !shown.has(i.product.id))
       .sort((a, b) => b.product.createdAt.localeCompare(a.product.createdAt))
       .slice(0, 4);
     return { counts, active, expiringSoon, expired, recent, stats: calculateUsageStats(products, today) };
@@ -98,11 +100,13 @@ export default function DashboardPage() {
                 </Section>
               </div>
               <div className="space-y-6 lg:col-span-2">
-                <Section title="Recently added" href="/inventory?sort=recent" empty="No active products." linkLabel={`View all ${data.active.length}`}>
-                  {data.recent.map((i, n) => (
-                    <ExpiryCard key={i.product.id} item={i} index={n} />
-                  ))}
-                </Section>
+                {data.recent.length > 0 && (
+                  <Section title="Also in your list" href="/inventory?sort=recent" empty="" linkLabel={`View all ${data.active.length}`}>
+                    {data.recent.map((i, n) => (
+                      <ExpiryCard key={i.product.id} item={i} index={n} />
+                    ))}
+                  </Section>
+                )}
                 {!user?.isDemo && <FamilyShortcut inHousehold={!!householdId} />}
               </div>
             </div>

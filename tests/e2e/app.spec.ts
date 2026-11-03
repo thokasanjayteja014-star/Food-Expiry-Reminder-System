@@ -20,7 +20,7 @@ test("unauthenticated users are redirected to login", async ({ page }) => {
 
 test("landing page explains the product", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Food Expiry Reminder", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Food Expiry Reminder/, level: 1 })).toBeVisible();
   await expect(page.getByText("No additional hardware required.")).toBeVisible();
   await expect(page.getByRole("heading", { name: "How it works" })).toBeVisible();
 });

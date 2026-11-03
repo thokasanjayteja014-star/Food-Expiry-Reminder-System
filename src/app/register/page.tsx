@@ -14,8 +14,8 @@ export default function RegisterPage() {
       footer={
         <>
           Already have an account?{" "}
-          <Suspense fallback={<span>Login</span>}>
-            <AuthSwitchLink href="/login">Login</AuthSwitchLink>
+          <Suspense fallback={<span>Sign in</span>}>
+            <AuthSwitchLink href="/login">Sign in</AuthSwitchLink>
           </Suspense>
         </>
       }

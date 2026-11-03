@@ -19,13 +19,10 @@ export function LandingAuthButtons() {
     );
   }
   return (
-    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-      <Link href="/register" className="btn-primary px-6 text-base">
-        Get Started
-        <ArrowRight aria-hidden className="size-5" />
-      </Link>
-      <Link href="/login" className="btn-secondary px-6 text-base">
-        Login
+    <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+      <Link href="/register" className="btn-primary group px-6 text-base">
+        Get started free
+        <ArrowRight aria-hidden className="size-5 transition-transform group-hover:translate-x-0.5" />
       </Link>
       {demoAllowed && (
         <button
