@@ -1,0 +1,24 @@
+# Free alternative scheduler: calls the reminder endpoint from GitHub Actions.
+# Use this if your host has no cron (or you want more than one run per day).
+# Repository settings > Secrets and variables > Actions: add APP_URL and CRON_SECRET.
+name: Expiry reminders
+
+on:
+  schedule:
+    - cron: "30 3 * * *" # 09:00 IST daily
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger reminder check
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          # Skip quietly until both secrets are added (for example when Vercel Cron is used instead).
+          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then echo "APP_URL or CRON_SECRET not set, skipping."; exit 0; fi
+          curl --fail --silent --show-error -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$APP_URL/api/reminders/check"

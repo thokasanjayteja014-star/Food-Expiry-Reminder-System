@@ -1,0 +1,58 @@
+{
+  "name": "food-expiry-reminder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Food Expiry Reminder System: a mobile-first PWA that scans food packages, extracts expiry dates with on-device OCR and sends web push reminders.",
+  "scripts": {
+    "dev": "next dev",
+    "dev:phone": "next dev -H 0.0.0.0 --experimental-https --experimental-https-key certificates/dev-key.pem --experimental-https-cert certificates/dev-cert.pem",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-food-expiry \"vitest run --config vitest.rules.config.mts\"",
+    "test:ocr": "vitest run -c vitest.ocr.config.mts",
+    "test:e2e": "playwright test",
+    "icons": "node scripts/generate-icons.mjs",
+    "vapid": "web-push generate-vapid-keys",
+    "postinstall": "node scripts/copy-ocr-assets.mjs",
+    "prebuild": "node scripts/copy-ocr-assets.mjs",
+    "test:family": "firebase emulators:exec --only auth,firestore --project demo-food-expiry \"playwright test -c playwright.family.config.ts\""
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@tesseract.js-data/eng": "^1.0.0",
+    "barcode-detector": "^3.2.2",
+    "firebase": "^12.19.0",
+    "firebase-admin": "^14.5.0",
+    "lucide-react": "^1.52.0",
+    "next": "^16.4.4",
+    "nodemailer": "^10.3.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1",
+    "tesseract.js": "^7.0.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "@playwright/test": "^1.56.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.4",
+    "@types/nodemailer": "^8.0.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/web-push": "^3.6.4",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.4",
+    "firebase-tools": "^15.32.1",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3"
+  }
+}
