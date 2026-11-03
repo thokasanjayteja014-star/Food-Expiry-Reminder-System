@@ -46,14 +46,17 @@ This project solves it with what people already own: a smartphone and a browser.
 | --- | --- |
 | Accounts | Register (name, email, password), login, logout, Google sign-in, password reset, persistent sessions. All user pages are protected. |
 | Scan | Live rear camera (`facingMode: "environment"`) with a scanning frame, capture, retake, or upload from gallery (JPG/PNG/WEBP, max 10 MB). Clear fallback message if the camera is unavailable or denied. |
-| OCR | On-device Tesseract.js with light preprocessing (resize, grayscale, contrast stretch, sharpen). Progress shown as *Preparing image... / Reading package text... / Detecting expiry date... / Done.* |
+| AI date reading | When a free AI key is set (Groq, xAI Grok or Gemini, tried in that order), the photo is sent to the AI reader to read the product name and dates, falling through to the next provider if one is busy. |
+| OCR | Offline fallback: on-device Tesseract.js with light preprocessing (resize, grayscale, contrast stretch, sharpen). Progress shown as *Preparing image... / Reading package text... / Detecting expiry date... / Done.* |
 | Date extraction | Finds dates near `EXP`, `EXPIRY`, `EXP DATE`, `EXPIRES`, `BEST BEFORE`, `BBE`, `USE BY` and ignores `MFG`/`PKD` dates. Supports `DD/MM/YYYY`, `DD-MM-YY`, `DD.MM.YYYY`, `20 OCT 2026`, `OCT 20 2026`, `OCT 2026`, `MM/YYYY`, ISO, and "Best before 6 months from MFG" (marked *Calculated from manufacturing date*). |
 | Confirmation | Nothing is saved automatically. A *Detected information* screen shows product name, MFG date, expiry date, category and OCR confidence, with **Confirm & Save**, **Edit** and **Scan Again**. Ambiguous dates such as `05/06/2026` must be chosen by the user. Low-confidence results ask for manual entry. |
 | Manual entry | Name, category, MFG date, expiry date, quantity, storage location, notes and reminder period, with validation and a warning for already-expired items. |
-| Inventory | Search (name, category, location), status filter (All, Safe, Expiring soon, Expiring today, Expired, Consumed, Discarded), category filter, sort (nearest expiry, latest expiry, recently added, alphabetical). |
-| Dashboard | Greeting with the user's name, Total / Expiring soon / Expired / Safe cards, Expiring soon, Recently added and All products lists, and a food tracking summary (consumed before expiry vs expired). |
-| Product details | Every field, days remaining, status, optional photo, and Edit, Delete (with confirmation), Mark as Consumed, Mark as Discarded, Track again. |
-| Status | Calculated every time it is shown: **SAFE** (> 7 days), **EXPIRING SOON** (1-7 days), **EXPIRING TODAY** (0), **EXPIRED** (< 0). Colour, icon and text together. |
+| Inventory | Compact two-line rows. Search (name, category, location), status filter (All, Safe, Expiring soon, Expiring today, Expired, Consumed, Discarded), category filter, sort (expiring first, expiring last, recently added, alphabetical). On phones, swipe an item left to mark it **Eaten** or **Thrown away**, with **Undo**. |
+| Dashboard | Greeting that says what needs attention, Scan and Add cards, Total / Expiring soon / Expired / Safe cards with share bars, one *Use these first* list (expired, today, soon), Recently added, a Family sharing shortcut and a food tracking summary. |
+| Family sharing | One shared food list per household, joined with a 6-character invite code or link. Every member gets the reminders, and each item shows who added it. |
+| Look and feel | Clean, mobile-first design with light and dark themes. Cards lift on hover and press on tap, lists fade in, and pages fade between screens. All motion turns off when the device asks for reduced motion. |
+| Product details | Mark as Consumed, Mark as Discarded and Edit at the top, then every field, days remaining, status, optional photo, Track again, and Delete (with confirmation). |
+| Status | Calculated every time it is shown: **Safe** (> 7 days), **Expiring soon** (1-7 days), **Expiring today** (0), **Expired** (< 0). Shown as a coloured dot plus text, so it never relies on colour alone. |
 | Reminders | Default 3 days before expiry; 1/3/5/7 days or custom per product. At most one "expiring soon", one "expiring today" and one "expired" reminder per product, never repeated. |
 | Push notifications | Standard Web Push (Push API + Notification API + service worker + VAPID). Permission is asked only when the user taps **Enable Notifications**. **Send Test Notification** button. Clicking a notification opens the product. |
 | Notification centre | Unread and read lists, mark as read, mark all as read, "Check reminders now", and honest delivery status (push sent / shown on this device / in-app only / failed). |
@@ -229,7 +232,7 @@ Cloud Functions and Firebase Storage are **not** used, because both require the 
 Nothing to configure. `npm install` runs `scripts/copy-ocr-assets.mjs`, which copies the Tesseract.js worker, the LSTM WebAssembly cores and `eng.traineddata.gz` (about 15 MB in total, from the `tesseract.js`, `tesseract.js-core` and `@tesseract.js-data/eng` npm packages) into `public/ocr/`. The app loads them from your own site, so:
 
 - no third-party CDN or paid OCR API is involved,
-- images never leave the phone,
+- this on-device reader never uploads the image (when an AI key is set and you are online, the AI reader is used first; see the next section),
 - after the first scan, the service worker caches the OCR files and scanning works offline.
 
 The first scan downloads the engine (a few MB, compressed); later scans start immediately.
@@ -373,8 +376,8 @@ npm start             # serves on port 3000
 
 1. Push this project to a GitHub repository.
 2. On <https://vercel.com>, **Add New > Project**, import the repository. The framework is detected as Next.js; no build settings need changing.
-3. In **Settings > Environment Variables**, add every variable from `.env.example` (mark the secret ones as sensitive).
-4. Deploy. Vercel provides HTTPS automatically, which the camera, service worker and push all require.
+3. In **Environment Variables** (on the import screen, or later under **Settings**), paste the whole contents of your `.env.local`; Vercel splits it into separate variables. Make sure `VAPID_SUBJECT` is `mailto:` plus your own email.
+4. Deploy. Vercel provides HTTPS automatically, which the camera, service worker and push all require. Then set `APP_URL` to the new address (for example `https://your-app.vercel.app`) and redeploy, so email links and invite links use it.
 5. Add the Vercel domain to Firebase **Authentication > Settings > Authorized domains**.
 6. Deploy the Firestore rules (see [Firebase setup](#firebase-setup)).
 7. Confirm `https://your-app.vercel.app/api/health` shows `true` for `firebaseClient`, `firebaseAdmin`, `webPush` and `cronSecret`.
@@ -435,7 +438,7 @@ Product CRUD (`POST/GET/PUT/DELETE` of products) and the notification list are d
 
 ## Security
 
-- Firestore rules (`firestore.rules`) allow each user to read and write only `users/{their uid}/...`, validate every product field, stop clients from rewriting `createdAt`, from claiming a push was sent, and from touching push subscriptions.
+- Firestore rules (`firestore.rules`) allow each user to read and write only `users/{their uid}/...` and the shared list of the household they belong to (households and invite codes are changed only by the server), validate every product field, stop clients from rewriting `createdAt`, from claiming a push was sent, and from touching push subscriptions.
 - Secrets (`FIREBASE_ADMIN_PRIVATE_KEY`, `VAPID_PRIVATE_KEY`, `CRON_SECRET`) are read only in server code (`src/lib/server`, guarded by `server-only`) and never sent to the browser.
 - The reminder endpoint accepts either the cron secret or a verified Firebase ID token.
 - Login redirects only to same-site paths. Security headers (`X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) are set in `next.config.ts`.
@@ -448,6 +451,7 @@ Product CRUD (`POST/GET/PUT/DELETE` of products) and the notification list are d
 | --- | --- |
 | Smartphone, laptop, internet, browser | ₹0 (already owned) |
 | Tesseract.js OCR | ₹0 (open source, runs on the phone) |
+| AI date reading (Groq or Gemini free tier) | ₹0 |
 | Firebase Auth + Firestore (Spark plan) | ₹0 |
 | Web Push (VAPID) | ₹0 |
 | Vercel Hobby hosting and daily cron | ₹0 |
@@ -460,7 +464,7 @@ The Firestore free tier (50,000 reads and 20,000 writes per day) is far more tha
 
 ## Limitations
 
-- **OCR accuracy depends on image quality.** Blur, glare, curved packs, dot-matrix and embossed print reduce accuracy. The user always confirms or corrects the result, and manual entry is always available.
+- **Date reading depends on image quality.** Blur, glare, curved packs, dot-matrix and embossed print reduce accuracy. The user always confirms or corrects the result, and manual entry is always available.
 - **Some expiry date formats are ambiguous.** `05/06/2026` can be 5 June or May 6. The app does not guess silently: it uses other dates on the pack when they reveal the order, otherwise it asks the user to choose. Day-first is the default reading.
 - **Month-only dates** (`EXP OCT 2026`) are stored as the last day of that month, and the confirmation screen says so.
 - **"Best before N months"** dates are calculated from the manufacturing date and labelled as calculated, not printed.
