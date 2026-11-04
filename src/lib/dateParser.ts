@@ -445,11 +445,25 @@ export function extractDateCandidates(text: string, options: ParseOptions = {}):
     // Previous line holds only labels (column layout: "MFG  EXP" over "10/26  04/27").
     const prevIsHeader = prevLabels.length > 0 && extractRawCandidates(prevLine, preferDayFirst, currentYear).length === 0;
     const unlabeled: number[] = [];
+    // A label pair such as "MFD./USE BY:" or "MFG/EXP" followed by two dates
+    // ("20 AUG 26 /15 FEB 27"): the dates follow the labels' order.
+    let pair: [LabelHit, LabelHit] | null = null;
+    for (let i = 0; i + 1 < labels.length && !pair; i++) {
+      const a = labels[i]!;
+      const b = labels[i + 1]!;
+      if (a.role !== b.role && /^[\s.,:;|/\\&-]*$/.test(line.slice(a.end, b.start))) pair = [a, b];
+    }
+    const afterPair = pair ? raws.filter((o) => o.index >= pair[1].end) : [];
+    const pairFor = (rc: RawCandidate): LabelHit | null => {
+      if (!pair || afterPair.length < 2) return null;
+      const k = afterPair.indexOf(rc);
+      return k === 0 ? pair[0] : k === 1 ? pair[1] : null;
+    };
 
     raws.forEach((rc) => {
       // Nearest label that ends before this date on the same line, with no other date in between.
-      let label: LabelHit | null = null;
-      for (const l of labels) {
+      let label: LabelHit | null = pairFor(rc);
+      for (const l of label ? [] : labels) {
         if (l.end <= rc.index) {
           const between = raws.some((o) => o !== rc && o.index >= l.end && o.index < rc.index);
           if (!between) label = l;

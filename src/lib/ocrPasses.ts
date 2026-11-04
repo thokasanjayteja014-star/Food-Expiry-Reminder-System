@@ -133,6 +133,33 @@ function lineImage(l: Levelled, index: number, scale = 1): GrayImage | null {
   return closeDots(scale === 1 ? strip : resize(strip, strip.width * scale, strip.height * scale), Math.round(l.grow * scale));
 }
 
+/**
+ * Plain printed lines that sit tight together ("2.9/ER220H6" right over "20 AUG 26 /15 FEB 27"):
+ * a block reading drops one of them, and a padded strip catches pieces of its neighbours.
+ * Each line is cut exactly at its own rows and read with a white margin around it.
+ */
+interface TightLines {
+  bin: GrayImage;
+  lines: Array<[number, number]>;
+}
+
+function tightLines(levelled: Levelled): TightLines {
+  const bin = clearBorder(otsu(stretch(levelled.image)));
+  return { bin, lines: splitLines(bin, Math.round(TARGET_CHAR_HEIGHT * 0.45)) };
+}
+
+function tightLineImage(t: TightLines, index: number): GrayImage | null {
+  const line = t.lines[index];
+  if (!line) return null;
+  const strip = rows(t.bin, line[0], line[1]);
+  const margin = Math.round(TARGET_CHAR_HEIGHT * 0.5);
+  const width = strip.width + 2 * margin;
+  const height = strip.height + 2 * margin;
+  const data = new Uint8ClampedArray(width * height).fill(255);
+  for (let y = 0; y < strip.height; y++) data.set(strip.data.subarray(y * strip.width, (y + 1) * strip.width), (y + margin) * width + margin);
+  return { width, height, data };
+}
+
 /** Where the levelled readings go in a block's reading order, and how many lines are read. */
 const MAX_LINES = 4;
 
@@ -289,12 +316,16 @@ export async function readWithPasses(
     if (found.length > 0) [source, regions] = [inverted, found];
   }
   const tried: PassResult[] = [];
+  // Tight line readings are small and quick, so they do not use up the reading budget.
+  const spent = () => tried.filter((t) => !t.pass.endsWith(", tight")).length;
 
   type Step = { name: string; psm: number; image: () => GrayImage | null };
   const blockPlans: Step[][] = regions.map((region, i) => {
     const prefix = `text block ${i + 1},`;
     let levelled: Levelled | undefined;
     const level = () => (levelled ??= levelBlock(zoomToRegion(source, region)));
+    let tight: TightLines | undefined;
+    const tightOf = () => (tight ??= tightLines(level()));
     const variant = (v: Variant): Step => ({ name: `${prefix} ${v.name}`, psm: v.psm, image: () => v.prepare(zoomToRegion(source, region, v.zoom)) });
     const lineSteps = (scale: number, label: string): Step[] =>
       Array.from({ length: MAX_LINES }, (_, k) => ({
@@ -302,12 +333,20 @@ export async function readWithPasses(
         psm: PSM_LINE,
         image: () => lineImage(level(), k, scale),
       }));
+    const tightSteps: Step[] = Array.from({ length: MAX_LINES }, (_, k) => ({
+      name: `${prefix} line ${k + 1}, tight`,
+      psm: PSM_LINE,
+      image: () => tightLineImage(tightOf(), k),
+    }));
     return [
       ...BLOCK_VARIANTS.slice(0, 2).map(variant),
       { name: `${prefix} levelled, dots closed`, psm: PSM_BLOCK, image: () => closeDots(level().image, level().grow) },
-      ...lineSteps(1, "dots closed"),
+      ...lineSteps(1, "dots closed").slice(0, 1),
+      ...tightSteps.slice(0, 2),
+      ...lineSteps(1, "dots closed").slice(1),
       ...BLOCK_VARIANTS.slice(2, 4).map(variant),
       ...lineSteps(0.6, "dots closed, small"),
+      ...tightSteps.slice(2),
       ...BLOCK_VARIANTS.slice(4).map(variant),
     ];
   });
@@ -323,8 +362,8 @@ export async function readWithPasses(
     const anyMfg = tried.some((t) => t.parse.manufacturingDate);
     // MFG digits are often misread (3 vs 5), so it must lead clearly, not just exist.
     // An MFG that is not a standard shelf life before the expiry may be a misread digit: read on.
-    const standard = mfg !== undefined && (shelfLifeFit(mfg[0], exp[0]) === 1 || tried.length >= 12);
-    return (standard && mfg[1] >= 3 && mfg[1] >= (runnerUp?.[1] ?? 0) + 2) || (!anyMfg && tried.length >= 4);
+    const standard = mfg !== undefined && (shelfLifeFit(mfg[0], exp[0]) === 1 || spent() >= 12);
+    return (standard && mfg[1] >= 3 && mfg[1] >= (runnerUp?.[1] ?? 0) + 2) || (!anyMfg && spent() >= 4);
   };
 
   const planned = blockPlans.reduce((n, p) => n + p.length, 0) + photoPlan.length;
@@ -350,10 +389,10 @@ export async function readWithPasses(
   for (let r = 0; r < regions.length && !settled() && (expiryVotes.top()?.[1] ?? 0) < 2; r++) {
     const before = tried.length;
     for (const step of blockPlans[r]!) {
-      if (tried.length >= maxPasses || settled()) break;
+      if (spent() >= maxPasses || settled()) break;
       // Expiry agreed on and an earlier block may hold the MFG: go back to that block.
       if (setAside.length > 0 && (expiryVotes.top()?.[1] ?? 0) >= 2) break;
-      if (!(await run(step))) continue;
+      if (done.has(step) || !(await run(step))) continue;
       const sofar = tried.slice(before);
       if (sofar.length !== 4) continue;
       // A block with no dates and hardly any digits after four readings is probably the product name.
@@ -362,6 +401,11 @@ export async function readWithPasses(
       // No expiry in this block (cans print MFG and EXP apart): read the next one, and come
       // back to this one below if its manufacturing date is still missing.
       if (r < regions.length - 1 && !sofar.some(hasExpiry)) {
+        // Plain print with its lines squeezed together: read the first lines one by one first.
+        for (const t of blockPlans[r]!.filter((s) => s.name.endsWith(", tight")).slice(0, 2)) {
+          if (!done.has(t)) await run(t);
+        }
+        if (tried.slice(before).some(hasExpiry)) continue;
         setAside.push(r);
         break;
       }
@@ -372,7 +416,7 @@ export async function readWithPasses(
   // A few extra readings for an MFG printed apart from the expiry (cans).
   const budget = maxPasses + (setAside.length > 0 && expiryVotes.top() ? 4 : 0);
   for (const step of leftovers) {
-    if (tried.length >= budget || settled()) break;
+    if (spent() >= budget || settled()) break;
     const exp = expiryVotes.top();
     if (exp && (setAside.length === 0 || rankMfg(mfgVotes, exp[0]).length > 0)) break;
     if (!done.has(step)) await run(step);
