@@ -5,7 +5,7 @@ const TONES = {
   blue: { base: "#2457C5", band: "#BDEBFA" },
 };
 
-export function LogoMark({ className = "size-8", tone = "green" }: { className?: string; tone?: keyof typeof TONES }) {
+export function LogoMark({ className = "size-8", tone = "blue" }: { className?: string; tone?: keyof typeof TONES }) {
   const c = TONES[tone];
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>

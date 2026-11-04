@@ -87,7 +87,7 @@ export async function sendVerificationEmail(email: string, continueUrl?: string)
     "Verify your email for Food Expiry Reminder",
     `Open this link to verify your email and start getting expiry reminders:\n${link}`,
     `<p>Tap the button to verify your email and start getting expiry reminders.</p>
-     <p><a href="${escapeHtml(link)}" style="display:inline-block;padding:10px 16px;background:#15803d;color:#fff;border-radius:8px;text-decoration:none">Verify email</a></p>`,
+     <p><a href="${escapeHtml(link)}" style="display:inline-block;padding:10px 16px;background:#2457c5;color:#fff;border-radius:8px;text-decoration:none">Verify email</a></p>`,
   );
 }
 

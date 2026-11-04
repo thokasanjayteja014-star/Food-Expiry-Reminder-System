@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { BellRing, ScanLine, ShieldCheck, Users } from "lucide-react";
 import { LogoMark } from "./Logo";
+import { HeroDemo } from "./landing/HeroDemo";
 
 const POINTS = [
   { Icon: ScanLine, title: "Scan in seconds", text: "Read the date straight off the pack." },
@@ -9,48 +10,12 @@ const POINTS = [
   { Icon: Users, title: "One family list", text: "Everyone sees what to use first." },
 ];
 
-/** What the app shows after signing in: a small, real slice of the "use these first" list. */
-const PREVIEW = [
-  { name: "Milk", place: "Dairy · Fridge", when: "Tomorrow", strong: true },
-  { name: "Paneer", place: "Dairy · Fridge", when: "In 3 days", strong: false },
-  { name: "Bread", place: "Bakery · Shelf", when: "In 4 days", strong: false },
-];
-
 function Brand() {
   return (
     <Link href="/" className="flex w-fit items-center gap-2.5 rounded-md text-[15px] font-semibold tracking-tight text-navy focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-royal/25">
-      <LogoMark className="size-9" tone="blue" />
+      <LogoMark className="size-9" />
       Food Expiry Reminder
     </Link>
-  );
-}
-
-function ListPreview() {
-  return (
-    <figure className="rounded-xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(20,43,77,0.06),0_12px_32px_-16px_rgba(36,87,197,0.25)]">
-      <figcaption className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-navy">Use these first</span>
-        <span className="rounded-md bg-ice px-2 py-0.5 text-xs font-medium text-royal">3 items</span>
-      </figcaption>
-      <ul className="mt-4 divide-y divide-line">
-        {PREVIEW.map((p) => (
-          <li key={p.name} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-            <span className="flex items-center gap-3">
-              <span className={`size-2 rounded-full ${p.strong ? "bg-royal" : "bg-sky"}`} />
-              <span>
-                <span className="block text-sm font-medium text-navy">{p.name}</span>
-                <span className="block text-xs text-slate-blue">{p.place}</span>
-              </span>
-            </span>
-            <span className={`text-xs ${p.strong ? "font-semibold text-royal" : "text-slate-blue"}`}>{p.when}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-4 flex items-center gap-2.5 rounded-lg bg-ice px-3 py-2.5 text-xs text-navy">
-        <BellRing aria-hidden className="size-4 shrink-0 text-royal" />
-        Reminder sent: Milk expires tomorrow.
-      </div>
-    </figure>
   );
 }
 
@@ -68,7 +33,7 @@ export function AuthCard({ title, subtitle, children, footer }: { title: string;
         <div className="relative">
           <Brand />
         </div>
-        <div className="relative my-auto max-w-md py-12">
+        <div className="relative my-auto max-w-md py-10">
           <p className="text-sm font-semibold uppercase tracking-[0.08em] text-royal">Less waste, every week</p>
           <h2 className="mt-3 text-[2rem] font-semibold leading-[1.15] tracking-tight text-navy xl:text-[2.25rem]">
             Know what to eat first, before it goes off.
@@ -76,11 +41,11 @@ export function AuthCard({ title, subtitle, children, footer }: { title: string;
           <p className="mt-4 text-[15px] leading-relaxed text-slate-blue">
             Scan the expiry date on anything you buy. Food Expiry Reminder keeps one sorted list for your home and nudges you before milk, bread or curd is wasted.
           </p>
-          <div className="mt-8">
-            <ListPreview />
+          <div className="mt-10 pr-10">
+            <HeroDemo />
           </div>
         </div>
-        <ul className="relative grid grid-cols-3 gap-4 border-t border-line pt-6">
+        <ul className="relative grid grid-cols-3 gap-4 border-t border-line pt-6 [@media(max-height:860px)]:hidden">
           {POINTS.map(({ Icon, title: t, text }) => (
             <li key={t}>
               <Icon aria-hidden className="size-5 text-royal" />
@@ -110,17 +75,17 @@ export function AuthCard({ title, subtitle, children, footer }: { title: string;
           </div>
         </div>
         {/* Phones and tablets: the brand story, short, after the form. */}
-        <section aria-label="Why Food Expiry Reminder" className="border-t border-line bg-ice px-5 py-8 sm:px-8 sm:py-12 lg:hidden">
-          {/* Tablets have the room for the story and the list preview too. */}
-          <div className="mx-auto hidden max-w-2xl grid-cols-2 items-center gap-8 sm:grid">
+        <section aria-label="Why Food Expiry Reminder" className="overflow-hidden border-t border-line bg-ice px-5 py-10 sm:px-8 sm:py-12 lg:hidden">
+          {/* The same looping phone as the landing page, after the form. */}
+          <div className="mx-auto grid max-w-[420px] gap-8 pb-2 sm:max-w-2xl sm:grid-cols-2 sm:items-center sm:pb-0">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.08em] text-royal">Less waste, every week</p>
               <h2 className="mt-2 text-2xl font-semibold leading-tight tracking-tight text-navy">Know what to eat first, before it goes off.</h2>
               <p className="mt-3 text-sm leading-relaxed text-slate-blue">One sorted list for your home, with a nudge before milk, bread or curd is wasted.</p>
             </div>
-            <ListPreview />
+            <HeroDemo />
           </div>
-          <ul className="mx-auto grid max-w-[420px] gap-5 sm:mt-10 sm:max-w-2xl sm:grid-cols-3 sm:border-t sm:border-line sm:pt-8">
+          <ul className="mx-auto mt-10 grid max-w-[420px] gap-5 border-t border-line pt-8 sm:mt-10 sm:max-w-2xl sm:grid-cols-3 sm:border-t sm:border-line sm:pt-8">
             {POINTS.map(({ Icon, title: t, text }) => (
               <li key={t} className="flex gap-3 sm:block">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-line bg-white">

@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 
 const TONE = {
   neutral: { tile: "bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-200", bar: "bg-brand-500" },
-  safe: { tile: "bg-safe-bg text-safe-fg", bar: "bg-green-500" },
+  safe: { tile: "bg-safe-bg text-safe-fg", bar: "bg-brand-400" },
   soon: { tile: "bg-soon-bg text-soon-fg", bar: "bg-amber-500" },
   expired: { tile: "bg-today-bg text-today-fg", bar: "bg-red-500" },
 } as const;

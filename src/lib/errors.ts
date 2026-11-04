@@ -48,12 +48,19 @@ const AUTH_MESSAGES: Record<string, string> = {
   "auth/cancelled-popup-request": "Google sign-in was cancelled.",
   "auth/popup-blocked": "The sign-in popup was blocked. Please allow popups and try again.",
   "auth/operation-not-allowed": "This sign-in method is not turned on yet. In the Firebase console, open Authentication > Sign-in method and enable it.",
-  "auth/unauthorized-domain": "This website is not authorised for sign-in. Add it in Firebase Authentication settings.",
+  "auth/unauthorized-domain":
+    "Google sign-in is not allowed on this website address yet. In the Firebase console, open Authentication > Settings > Authorized domains and add this site's domain.",
+  "auth/web-storage-unsupported": "Your browser is blocking the storage sign-in needs. Turn off private mode or open the site in Chrome or Safari.",
+  "auth/operation-not-supported-in-this-environment": "Google sign-in does not work inside this app's browser. Open the site in Chrome or Safari.",
+  "auth/invalid-api-key": "Sign-in is not set up correctly on this server (the Firebase API key is invalid).",
+  "auth/configuration-not-found": "Google sign-in is not set up in Firebase yet. Enable it under Authentication > Sign-in method.",
+  "auth/internal-error": "Google sign-in could not start. Please try again.",
 };
 
 export function friendlyAuthError(error: unknown): string {
   const code = (error as { code?: string } | null)?.code ?? "";
-  return AUTH_MESSAGES[code] ?? "We couldn't sign you in. Please try again.";
+  // Unknown errors keep their code, so a support question can be answered straight away.
+  return AUTH_MESSAGES[code] ?? `We couldn't sign you in. Please try again.${code ? ` (${code})` : ""}`;
 }
 
 /** Rejects if `promise` does not settle in time, so the UI never spins forever. */

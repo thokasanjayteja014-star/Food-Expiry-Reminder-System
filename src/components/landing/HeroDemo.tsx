@@ -6,7 +6,7 @@ import { Bell, Check, ScanLine } from "lucide-react";
 const ITEMS = [
   { name: "Paneer", meta: "Dairy · Fridge", days: "Expires today", dot: "bg-red-500", text: "text-red-600 dark:text-red-300" },
   { name: "Bread", meta: "Bakery · Shelf", days: "Expires tomorrow", dot: "bg-amber-500", text: "text-amber-700 dark:text-amber-300" },
-  { name: "Biscuits", meta: "Snacks · Cupboard", days: "39 days left", dot: "bg-green-500", text: "muted" },
+  { name: "Biscuits", meta: "Snacks · Cupboard", days: "39 days left", dot: "bg-brand-400", text: "muted" },
 ];
 
 /**
@@ -34,12 +34,12 @@ export function HeroDemo() {
 
   return (
     <div aria-hidden className="relative mx-auto w-full max-w-[22rem] select-none">
-      <div className="absolute -inset-10 -z-10 rounded-full bg-[radial-gradient(closest-side,rgba(18,183,106,0.22),transparent)] blur-2xl" />
+      <div className="absolute -inset-10 -z-10 rounded-full bg-[radial-gradient(closest-side,rgba(99,165,242,0.25),transparent)] blur-2xl" />
       <div className="rounded-[2.2rem] border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_30px_60px_-30px_rgba(16,24,40,0.45)]">
         <div className="overflow-hidden rounded-[1.6rem] bg-[var(--bg)]">
           {/* Camera view */}
-          <div className="relative h-44 overflow-hidden bg-stone-900">
-            <div className="absolute inset-x-8 top-6 bottom-6 rounded-xl bg-gradient-to-br from-sky-100 to-sky-200 p-3 text-stone-700 shadow-inner">
+          <div className="relative h-44 overflow-hidden bg-brand-900">
+            <div className="absolute inset-x-8 top-6 bottom-6 rounded-xl bg-gradient-to-br from-white to-brand-50 p-3 text-brand-900 shadow-inner">
               <p className="text-[11px] font-bold tracking-wide">FRESH MILK · 500 ml</p>
               <p className="mt-6 font-mono text-[11px]">MFG 01/11/2026</p>
               <p className={`mt-1 inline-block rounded font-mono text-[12px] font-bold transition-colors duration-500 ${phase >= 1 ? "bg-brand-200 text-brand-900" : ""}`}>
@@ -47,7 +47,7 @@ export function HeroDemo() {
               </p>
             </div>
             <div className="absolute inset-x-6 top-4 bottom-4 rounded-2xl border-2 border-white/80" />
-            {phase === 0 && <span className="animate-scan absolute inset-x-8 h-0.5 rounded bg-brand-200 shadow-[0_0_12px_2px_rgba(166,244,197,0.9)]" />}
+            {phase === 0 && <span className="animate-scan absolute inset-x-8 h-0.5 rounded bg-brand-200 shadow-[0_0_12px_2px_rgba(189,235,250,0.9)]" />}
             <span
               className={`absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium text-white transition-colors duration-300 ${
                 phase >= 1 ? "bg-brand-600" : "bg-black/60"

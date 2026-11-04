@@ -44,7 +44,7 @@ export function OCRProcessor({
   return (
     <div className="mx-auto max-w-md space-y-4">
       {/* eslint-disable-next-line @next/next/no-img-element -- local blob preview */}
-      <img src={previewUrl} alt="Captured food package" className="max-h-[50dvh] w-full rounded-2xl bg-stone-900 object-contain" />
+      <img src={previewUrl} alt="Captured food package" className="max-h-[50dvh] w-full rounded-2xl bg-brand-900 object-contain" />
 
       {stage && (
         <div className="card p-4" aria-live="polite">

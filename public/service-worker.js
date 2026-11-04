@@ -1,5 +1,5 @@
 /* Food Expiry Reminder service worker: offline cache, push notifications, notification clicks. */
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `fer-static-${VERSION}`;
 const PAGE_CACHE = `fer-pages-${VERSION}`;
 const PRECACHE = ["/", "/offline.html", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];

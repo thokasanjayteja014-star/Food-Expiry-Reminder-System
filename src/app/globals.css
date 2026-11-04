@@ -4,25 +4,28 @@
 
 /* Colour tokens. Status colours are always paired with a text label for accessibility. */
 @theme {
-  --color-brand-50: #ecfdf3;
-  --color-brand-100: #d1fadf;
-  --color-brand-200: #a6f4c5;
-  --color-brand-500: #12b76a;
-  --color-brand-600: #039855;
-  --color-brand-700: #027a48;
-  --color-brand-800: #05603a;
-  --color-brand-900: #054f31;
+  /* Royal blue. 600 is the primary (#2457C5); 400 is the sky accent (#63A5F2). */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dce9fc;
+  --color-brand-200: #b9d4f8;
+  --color-brand-300: #8fb9f3;
+  --color-brand-400: #63a5f2;
+  --color-brand-500: #3b74dc;
+  --color-brand-600: #2457c5;
+  --color-brand-700: #1e4aae;
+  --color-brand-800: #193e92;
+  --color-brand-900: #142b4d;
 
-  --color-safe-bg: #dcfce7;
-  --color-safe-fg: #166534;
+  --color-safe-bg: #e3eefd;
+  --color-safe-fg: #1e4aae;
   --color-soon-bg: #fef3c7;
   --color-soon-fg: #92400e;
   --color-today-bg: #fee2e2;
   --color-today-fg: #b91c1c;
-  --color-expired-bg: #e7e5e4;
+  --color-expired-bg: #fdecec;
   --color-expired-fg: #7f1d1d;
-  --color-done-bg: #e0e7ff;
-  --color-done-fg: #3730a3;
+  --color-done-bg: #def4fb;
+  --color-done-fg: #0e5a73;
 
   /* Sign-in pages: a white canvas with royal-blue accents. */
   --color-royal: #2457c5;
@@ -39,34 +42,34 @@
 }
 
 :root {
-  --bg: #f7f8f8;
+  --bg: #f8fbff;
   --surface: #ffffff;
-  --surface-2: #f2f4f4;
-  --border: #e4e7e7;
-  --text: #111827;
-  --muted: #5b6472;
+  --surface-2: #eff6ff;
+  --border: #d5e5f7;
+  --text: #142b4d;
+  --muted: #58708f;
   color-scheme: light;
 }
 
 .dark {
-  --bg: #0c0f0f;
-  --surface: #141918;
-  --surface-2: #1b2120;
-  --border: #29302f;
-  --text: #eef1f0;
-  --muted: #a1aaa8;
+  --bg: #0b1626;
+  --surface: #101f35;
+  --surface-2: #172841;
+  --border: #243b5c;
+  --text: #e8f0fb;
+  --muted: #9fb3cf;
   color-scheme: dark;
 
-  --color-safe-bg: #14532d;
-  --color-safe-fg: #bbf7d0;
+  --color-safe-bg: #1a3563;
+  --color-safe-fg: #c9dcfa;
   --color-soon-bg: #713f12;
   --color-soon-fg: #fde68a;
   --color-today-bg: #7f1d1d;
   --color-today-fg: #fecaca;
-  --color-expired-bg: #3f3f46;
+  --color-expired-bg: #4a1d1d;
   --color-expired-fg: #fca5a5;
-  --color-done-bg: #312e81;
-  --color-done-fg: #c7d2fe;
+  --color-done-bg: #0f3b4a;
+  --color-done-fg: #bdebfa;
 }
 
 html,
@@ -106,7 +109,7 @@ body {
   @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-[color,background-color,box-shadow,transform] duration-150 disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100;
 }
 @utility btn-primary {
-  @apply btn bg-brand-600 text-white shadow-[0_1px_2px_rgba(16,24,40,0.08)] hover:bg-brand-700 hover:shadow-[0_4px_12px_-4px_rgba(3,152,85,0.5)] active:scale-[0.98] active:bg-brand-800;
+  @apply btn bg-brand-600 text-white shadow-[0_1px_2px_rgba(16,24,40,0.08)] hover:bg-brand-700 hover:shadow-[0_4px_12px_-4px_rgba(36,87,197,0.5)] active:scale-[0.98] active:bg-brand-800;
 }
 @utility btn-secondary {
   @apply btn border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface-2)] active:scale-[0.98];

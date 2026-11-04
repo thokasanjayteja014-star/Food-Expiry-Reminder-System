@@ -164,7 +164,7 @@ function ActionCard({
       style={{ ["--i" as string]: index }}
       className={`animate-in group relative flex flex-col gap-3 overflow-hidden rounded-xl p-4 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 active:scale-[0.98] ${
         primary
-          ? "bg-brand-600 text-white shadow-[0_6px_20px_-10px_rgba(3,152,85,0.7)] hover:shadow-[0_10px_24px_-10px_rgba(3,152,85,0.8)]"
+          ? "bg-brand-600 text-white shadow-[0_6px_20px_-10px_rgba(36,87,197,0.7)] hover:shadow-[0_10px_24px_-10px_rgba(36,87,197,0.8)]"
           : "card hover:shadow-[0_6px_20px_-8px_rgba(16,24,40,0.18)]"
       }`}
     >

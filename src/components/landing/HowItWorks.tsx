@@ -57,7 +57,7 @@ export function HowItWorks() {
                 onClick={() => setActive(i)}
                 className={`group flex h-full w-full flex-col items-center gap-2 rounded-xl border p-3 text-center lg:flex-row lg:items-start lg:gap-4 lg:p-4 lg:text-left transition-[background-color,border-color,box-shadow] duration-200 ${
                   on
-                    ? "border-brand-500/60 bg-[var(--surface)] shadow-[0_8px_24px_-12px_rgba(3,152,85,0.45)]"
+                    ? "border-brand-500/60 bg-[var(--surface)] shadow-[0_8px_24px_-12px_rgba(36,87,197,0.45)]"
                     : "border-transparent hover:border-[var(--border)] hover:bg-[var(--surface)]"
                 }`}
               >

@@ -27,7 +27,7 @@ export function BottomNavigation({ unread }: { unread: number }) {
                 }`}
               >
                 {isScan ? (
-                  <span className="flex size-10 items-center justify-center rounded-xl bg-brand-600 text-white shadow-[0_4px_12px_-4px_rgba(3,152,85,0.6)] transition-transform duration-150 active:scale-90">
+                  <span className="flex size-10 items-center justify-center rounded-xl bg-brand-600 text-white shadow-[0_4px_12px_-4px_rgba(36,87,197,0.6)] transition-transform duration-150 active:scale-90">
                     <Icon aria-hidden className="size-5" />
                   </span>
                 ) : (

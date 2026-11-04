@@ -40,7 +40,11 @@ export async function loginWithGoogle() {
   provider.setCustomParameters({ prompt: "select_account" });
   try {
     const cred = await signInWithPopup(auth, provider);
-    await ensureUserProfile(cred.user.uid, cred.user.displayName ?? "", cred.user.email ?? "");
+    // The sign-in itself has succeeded here. The profile is also ensured when the session
+    // starts (AuthContext), so a slow or failed write must not show "sign-in failed".
+    ensureUserProfile(cred.user.uid, cred.user.displayName ?? "", cred.user.email ?? "").catch((e) =>
+      console.warn("Could not save the profile after Google sign-in", e),
+    );
     return cred.user;
   } catch (error) {
     // Some mobile browsers block popups; fall back to a full-page redirect.

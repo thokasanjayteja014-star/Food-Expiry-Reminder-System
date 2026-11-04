@@ -61,7 +61,7 @@ export function ProductList({ items, swipe = true }: { items: InventoryItem[]; s
       {(done || error) && (
         <div
           role="status"
-          className="animate-toast fixed inset-x-4 bottom-24 z-50 mx-auto flex max-w-md items-center justify-between gap-3 rounded-lg bg-gray-900 px-4 py-3 text-sm text-white shadow-lg lg:bottom-6"
+          className="animate-toast fixed inset-x-4 bottom-24 z-50 mx-auto flex max-w-md items-center justify-between gap-3 rounded-lg bg-brand-900 px-4 py-3 text-sm text-white shadow-lg lg:bottom-6"
         >
           <span className="min-w-0 truncate">
             {error ?? `${done!.name} marked as ${done!.action === "CONSUMED" ? "eaten" : "thrown away"}.`}

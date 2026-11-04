@@ -33,7 +33,7 @@ export default function LandingPage() {
         <section className="relative">
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[38rem] bg-[radial-gradient(60%_50%_at_20%_10%,rgba(18,183,106,0.14),transparent),radial-gradient(40%_40%_at_90%_20%,rgba(56,189,248,0.10),transparent)]"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[38rem] bg-[radial-gradient(60%_50%_at_20%_10%,rgba(36,87,197,0.10),transparent),radial-gradient(40%_40%_at_90%_20%,rgba(189,235,250,0.35),transparent)]"
           />
           <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:pt-20">
             <div className="animate-in">
@@ -43,7 +43,7 @@ export default function LandingPage() {
               </p>
               <h1 className="mt-5 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
                 <span className="sr-only">Food Expiry Reminder: </span>
-                Eat it <span className="bg-gradient-to-r from-brand-600 to-emerald-400 bg-clip-text text-transparent">before</span> it expires.
+                Eat it <span className="text-brand-600 dark:text-brand-300">before</span> it expires.
               </h1>
               <p className="mt-5 max-w-xl text-lg muted">
                 Scan the date on any pack with your phone. We keep the list and remind you before milk, bread or curd goes off, so less ends up in the bin.
@@ -133,9 +133,7 @@ export default function LandingPage() {
         {/* Final call to action */}
         <section className="py-20">
           <Reveal className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="relative overflow-hidden rounded-2xl bg-brand-700 px-6 py-12 text-center text-white sm:px-12">
-              <div aria-hidden className="absolute -right-16 -top-16 size-64 rounded-full bg-white/10 blur-2xl" />
-              <div aria-hidden className="absolute -bottom-20 -left-10 size-64 rounded-full bg-emerald-300/20 blur-2xl" />
+            <div className="relative overflow-hidden rounded-2xl bg-brand-600 px-6 py-12 text-center text-white sm:px-12">
               <h2 className="relative text-2xl font-semibold tracking-tight sm:text-3xl">Start with the next thing you buy.</h2>
               <p className="relative mt-2 text-white/80">Free, works on the phone you already have.</p>
               <div className="relative mt-6 flex flex-wrap justify-center gap-3">

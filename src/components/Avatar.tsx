@@ -7,7 +7,7 @@ export function Avatar({ name, className = "size-8 text-xs" }: { name: string; c
     .map((w) => w[0]!.toUpperCase())
     .join("");
   return (
-    <span aria-hidden className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 font-semibold text-white ${className}`}>
+    <span aria-hidden className={`flex shrink-0 items-center justify-center rounded-full bg-brand-600 font-semibold text-white ${className}`}>
       {initials || "?"}
     </span>
   );

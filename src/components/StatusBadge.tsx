@@ -2,12 +2,12 @@ import type { DisplayStatus } from "@/types/product";
 import { STATUS_LABELS } from "@/lib/expiry";
 
 const STYLES: Record<DisplayStatus, { cls: string; dot: string }> = {
-  SAFE: { cls: "bg-safe-bg text-safe-fg", dot: "bg-green-500" },
+  SAFE: { cls: "bg-safe-bg text-safe-fg", dot: "bg-brand-400" },
   EXPIRING_SOON: { cls: "bg-soon-bg text-soon-fg", dot: "bg-amber-500" },
   EXPIRING_TODAY: { cls: "bg-today-bg text-today-fg", dot: "bg-red-500" },
   EXPIRED: { cls: "bg-today-bg text-today-fg", dot: "bg-red-700 dark:bg-red-400" },
   CONSUMED: { cls: "bg-done-bg text-done-fg", dot: "bg-indigo-500" },
-  DISCARDED: { cls: "bg-expired-bg text-[var(--muted)]", dot: "bg-stone-400" },
+  DISCARDED: { cls: "bg-expired-bg text-[var(--muted)]", dot: "bg-[#9fb3cf]" },
 };
 
 /** Colour dot plus text, so status never relies on colour alone. */
